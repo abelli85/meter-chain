@@ -72,7 +72,7 @@ A detail description of the SDK configuration for the project, please checkout [
 Compile and run test cases:
 
 ```
-$ cd spring-boot-starter
+$ cd meter-chain-starter
 $ ./gradlew build
 $ ./gradlew test
 ```

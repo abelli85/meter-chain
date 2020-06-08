@@ -70,7 +70,7 @@ spring:
 
 编译并运行测试案例，在项目根目录下运行：
 ```
-$ cd spring-boot-starter
+$ cd meter-chain-starter
 $ ./gradlew build
 $ ./gradlew test
 ```
