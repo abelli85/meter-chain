@@ -15,7 +15,7 @@ open class Application : CommandLineRunner {
      * @throws Exception on error
      */
     override fun run(vararg args: String?) {
-        lgr.info("Meter Chain Starter launching...")
+        lgr.info("水表链启动...")
     }
 }
 
@@ -24,6 +24,6 @@ fun main(args: Array<String>) {
     SpringApplication.run(Application::class.java, *args)
 
     Runtime.getRuntime().addShutdownHook(Thread {
-        lgr.info("Meter Chain Starter exited.")
+        lgr.info("水表链退出.")
     })
 }

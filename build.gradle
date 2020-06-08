@@ -66,6 +66,9 @@ dependencies {
     compile 'joda-time:joda-time:2.10.6'
     compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
 }
 
 configurations {

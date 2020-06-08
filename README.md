@@ -104,6 +104,14 @@ $ ./gradlew test
 
 When all test cases run successfully, it means that the blockchain is running normally,and the project is connected to the blockchain through the SDK. You can develop your blockchain application based on the project。
 
+### Access Website
+
+Run the following command, you should see "水表链启动...". Then browsering to "http://localhost:8080/" should work:
+
+```
+$ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
+```
+
 **Note: If you run the demo project in IntelliJ IDEA or Eclipse, please use gradle wrapper mode. In addition, please enable `Annotation Processors` in `Settings` for IntelliJ IDEA.**
 
 ## Test Case Introduction

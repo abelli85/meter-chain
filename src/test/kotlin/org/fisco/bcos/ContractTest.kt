@@ -2,13 +2,13 @@ package org.fisco.bcos
 
 import com.alibaba.fastjson.JSON
 import org.fisco.bcos.constants.GasConstants
+import org.fisco.bcos.model.Meter
 import org.fisco.bcos.model.MeterBatch
 import org.fisco.bcos.temp.HelloWorld
 import org.fisco.bcos.temp.UserMeter
 import org.fisco.bcos.web3j.crypto.Credentials
 import org.fisco.bcos.web3j.protocol.Web3j
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider
-import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
 import org.junit.After
 import org.junit.Assert
@@ -20,7 +20,6 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
-import org.springframework.data.mongodb.core.update
 import java.util.*
 
 class ContractTest : BaseTest() {
@@ -36,14 +35,14 @@ class ContractTest : BaseTest() {
     companion object {
         // 接收来自厂家的检定委托单
         private val batch = MeterBatch().apply {
-            batchId = "2020061234"
+            batchId = "202006" + (1001..9999).random().toString()
             meterList = listOf("0221520012000123", "0221520012000301")
             manufacturer = "宁波水表"
             verifierName = "abel"
             deliverDate = LocalDateTime(2020, 6, 1, 9, 20).toDate()
             validDate = LocalDateTime(2026, 5, 31, 0, 0).toDate()
         }
-        const val KEY_BATCH_ID = "batchId"
+
         private val lgr = LoggerFactory.getLogger(ContractTest::class.java)
     }
 
@@ -52,6 +51,8 @@ class ContractTest : BaseTest() {
      */
     @Before
     fun setUp() {
+        mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(batch.batchId)), MeterBatch::class.java)
+        lgr.info("clean meter-batch to avoid confliction: {}", batch.batchId)
     }
 
     /**
@@ -59,8 +60,6 @@ class ContractTest : BaseTest() {
      */
     @After
     fun tearDown() {
-        mongoTemplate!!.remove(Query.query(Criteria.where(KEY_BATCH_ID).`is`(batch.batchId)), MeterBatch::class.java)
-        lgr.info("clean meter-batch in test: {}", batch.batchId)
     }
 
     /**
@@ -69,6 +68,12 @@ class ContractTest : BaseTest() {
     @Test
     fun testUserMeter() {
         mongoTemplate!!.save(batch)
+        batch.meterList?.forEach {
+            mongoTemplate!!.save(Meter().apply {
+                meterId = it
+                batchId = batch.batchId
+            })
+        }
         lgr.info("新到检定委托单: {}", JSON.toJSONString(batch, true))
 
         // 委托单开始上链

@@ -28,3 +28,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost/test
+#目的是为了去除thymeleaf严格的校验，不然html界面写的不严谨就会报错
+  thymeleaf:
+    mode: LEGACYHTML5
+    encoding: utf-8
+    cache: false
+    servlet:
+      content-type: text/html

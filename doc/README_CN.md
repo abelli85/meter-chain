@@ -102,6 +102,14 @@ $ ./gradlew test
 
 当所有测试案例运行成功，则代表区块链运行正常，该项目通过SDK连接区块链正常。开发者可以基于该项目进行具体应用开发。
 
+### 访问网页
+
+运行如下命令行，可看到 "水表链启动...". 此时打开浏览器访问 "http://localhost:8080/":
+
+```
+$ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
+```
+
 **注：如果在IntelliJ IDEA或Eclipse中运行该demo工程，则使用gradle wrapper模式，此外IntelliJ IDEA需要在设置中开启`Annotation Processors`功能。**
 
 ## 测试案例介绍

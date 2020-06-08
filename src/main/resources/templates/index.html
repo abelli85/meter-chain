@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>我是水表用户</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link th:href="@{/bootstrap/bootstrap.css}" href="../static/bootstrap/bootstrap.css" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/bootstrap-theme.css}" href="../static/bootstrap/bootstrap-theme.css"
+          rel="stylesheet"/>
+    <script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
+    <script th:src="@{/js/bootstrap.min.js}" src="../static/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div align="center">
+            <h2>尊敬的水表用户，欢迎您！</h2>
+        </div>
+
+        <div class="col-md-7">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center">
+                    <span class="panel-title">委托单列表</span>
+                </div>
+                <div class="panel-body">
+                    <table class="table-bordered" style="width: 100%">
+                        <tr style="height: 40px; background-color: #f7ecb5">
+                            <th class="text-center">委托单号</th>
+                            <th class="text-center">水表厂家</th>
+                            <th class="text-center">水表数量</th>
+                            <th class="text-center">检定员</th>
+                            <th class="text-center">有效期</th>
+                            <th class="text-center">合约地址</th>
+                        </tr>
+                        <tr th:each="batch:${batchList}" class="text-center" style="height: 40px">
+                            <td><span th:text="${batch.batchId}"></span></td>
+                            <td><span th:text="${batch.manufacturer}"></span></td>
+                            <td><span th:text="${batch.meterCount}"></span></td>
+                            <td><span th:text="${batch.verifierName}"></span></td>
+                            <td><span th:text="${#dates.format(batch.validDate, 'yyyy-MM-dd hh:mm:ss')}"></span></td>
+                            <td><span th:text="${batch.contractAddress}"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+
+        <div class="row">
+            <form class="form-horizontal" id="frm" th:action="@{/queryMeter}" method="post" target="_blank">
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading text-center">
+                            <span class="panel-title">输入表码查询检定结果</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="meterId" class="col-sm-3 control-label" style="color: red">表&nbsp;码:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="meterId" name="meterId" placeholder="请输入表码" value="0221520012000301">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-10 control-label" style="color:red;text-align: center"
+                                   id="tick">&nbsp;</label>
+                        </div>
+                        <div class="form-group" >
+                            <div class="col-sm-8">
+                                <button type="submit" id="submit" class="btn btn-default">&nbsp;&nbsp; 查询 &nbsp;&nbsp;</button>
+                            </div>
+                        </div>
+                        <div class="panel-footer text-right">
+                            <br/>
+                            <span class="panel-title">Abel@2020</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>

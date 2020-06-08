@@ -87,5 +87,6 @@ class MeterBatch {
 
     companion object {
         const val ISO_DATE_TIME_FMT = "yyyy-MM-dd'T'HH:mm:ssZ"
+        const val KEY_BATCH_ID = "batchId"
     }
 }
