@@ -2,7 +2,7 @@
 
 [English](../README.md) / 中文
 
-# Spring Boot Starter
+# Meter Chain Starter
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![Build Status](https://travis-ci.org/FISCO-BCOS/spring-boot-starter.svg?branch=master)](https://travis-ci.org/FISCO-BCOS/spring-boot-starter)
 [![CodeFactor](https://www.codefactor.io/repository/github/fisco-bcos/spring-boot-starter/badge)](https://www.codefactor.io/repository/github/fisco-bcos/spring-boot-starter)
@@ -18,11 +18,18 @@
 ### 获取源码
 
 ```
-$ git clone https://github.com/FISCO-BCOS/spring-boot-starter.git
+$ git clone https://github.com/abelli85/meter-chain.git
 ```
 
 #### 节点证书配置
 将节点所在目录`nodes/${ip}/sdk`下的`ca.crt`、`sdk.crt`和`sdk.key`文件拷贝到项目的`src/main/resources`目`录下供SDK使用(FISCO BCOS 2.1以前，证书为`ca.crt`、`node.crt`和`node.key`)。
+
+### 配置 mongodb 数据库
+启动 mongodb 服务，默认端口，无口令.
+```
+docker pull mongo
+docker run -d --name nosql -p 27017:27017 mongo
+```
 
 ### 配置文件设置
 
@@ -51,6 +58,11 @@ accounts:
   pem-file: 0xcdcce60801c0a2e6bb534322c32ae528b9dec8d2.pem # PEM 格式账户文件
   p12-file: 0x98333491efac02f8ce109b0c499074d47e7779a6.p12 # PKCS12 格式账户文件
   password: 123456 # PKCS12 格式账户密码
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost/test
 ```
 项目中关于SDK配置的详细说明请[参考这里](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html#sdk)。
 
@@ -71,104 +83,93 @@ $ ./gradlew test
 
 该示例项目提供的测试案例，供开发者参考使用。测试案例主要分为对[Web3j API](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html#web3j-api)，[Precompiled Serveice API](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html#precompiled-service-api)、Solidity合约文件转Java合约文件、部署和调用合约的测试。
 
-### Web3j API测试
+### 合约测试
 
-提供Web3jApiTest测试类测试Web3j API。示例测试如下：
+提供[水表检定]的合约测试。测试用例如下：
 
-```java
-@Test
-public void getBlockNumber() throws IOException {
-    BigInteger blockNumber = web3j.getBlockNumber().send().getBlockNumber();
-    System.out.println(blockNumber);
-    assertTrue(blockNumber.compareTo(new BigInteger("0"))>= 0);
-}
-```
+```kotlin
+    /**
+     * 测试水表检定结果的上链、添加检定结果、结单、查询。
+     */
+    @Test
+    fun testUserMeter() {
+        mongoTemplate!!.save(batch)
+        lgr.info("新到检定委托单: {}", JSON.toJSONString(batch, true))
 
-**温馨提示：** Application类初始化了web3j对象，在业务代码需要的地方可用注解的方式直接使用，使用方式如下：
+        // 委托单开始上链
+        val um = UserMeter.deploy(web3j, credentials,
+                StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
+                "宁波水表").send()
+        lgr.info("UserMeter contract address: {}", um.contractAddress)
+        batch.apply {
+            verifierAddress = um.verifier().send().toString()
+            contractAddress = um.contractAddress
+        }
+        mongoTemplate.updateFirst(
+                Query.query(Criteria.where("batchId").`is`(batch.batchId)),
+                Update.update("verifierAddress", batch.verifierAddress)
+                        .addToSet("contractAddress", batch.contractAddress),
+                MeterBatch::class.java)
 
-  ```java
-@Autowired
-private Web3j web3j
-  ```
+        // 空委托单不允许完成
+        um.finish().send()
+        lgr.warn("空委托单不允许完成")
 
-### Precompiled Service API测试
+        um.verify(batch.meterList!![0].toByteArray(), LocalDateTime.now().toString(), "PASS").send()
+        Thread.sleep(100)
+        um.verify(batch.meterList!![1].toByteArray(), LocalDateTime.now().toString(), "PASS").send()
+        lgr.info("2 meters verified.")
 
-提供PrecompiledServiceApiTest测试类测试Precompiled Service API。示例测试如下：
+        // 完成委托单
+        um.finish().send()
+        batch.apply {
+            finishDate = Date()
+        }
+        mongoTemplate.updateFirst(
+                Query.query(Criteria.where("batchId").`is`(batch.batchId)),
+                Update.update("finishDate", batch.finishDate),
+                MeterBatch::class.java
+        )
+        lgr.info("完成委托单")
 
-```java
-@Test
-public void testSystemConfigService() throws Exception {
-    SystemConfigSerivce systemConfigSerivce = new SystemConfigSerivce(web3j, credentials);
-    systemConfigSerivce.setValueByKey("tx_count_limit", "2000");
-    String value = web3j.getSystemConfigByKey("tx_count_limit").send().getSystemConfigByKey();
-    System.out.println(value);
-    assertTrue("2000".equals(value));
-}
-```
+        // 立即查询检定结果
+        kotlin.run {
+            val r1 = um.getInfo(batch.meterList!![0].toByteArray()).send()
+            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+                    batch.meterList!![0],
+                    r1.value1, r1.value2, r1.value3, r1.value4)
+            Assert.assertEquals("PASS", r1.value3)
 
-### Solidity合约文件转Java合约文件测试
+            val r2 = um.getInfo(batch.meterList!![1].toByteArray()).send()
+            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+                    batch.meterList!![1],
+                    r2.value1, r2.value2, r2.value3, r2.value4)
+            Assert.assertEquals("PASS", r2.value3)
+        }
 
-提供SolidityFunctionWrapperGeneratorTest测试类测试Solidity合约文件转Java合约文件。示例测试如下：
+        // 根据合约地址查询水表检定结果.
+        val batchList = mongoTemplate.findAll(MeterBatch::class.java)
+        Assert.assertTrue(batchList.size > 0)
+        batchList.first().also {
+            lgr.info("retrieving contract for the meter-batch: {}", JSON.toJSONString(it, true))
 
-```java
-@Test
-public void compileSolFilesToJavaTest() throws IOException {
-    File solFileList = new File("src/test/resources/contract");
-    File[] solFiles = solFileList.listFiles();
+            val contract = UserMeter.load(it.contractAddress, web3j, credentials,
+                    StaticGasProvider(
+                            GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT))
 
-    for (File solFile : solFiles) {
+            val r1 = contract.getInfo(batch.meterList!![0].toByteArray()).send()
+            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+                    batch.meterList!![0],
+                    r1.value1, r1.value2, r1.value3, r1.value4)
+            Assert.assertEquals("PASS", r1.value3)
 
-        SolidityCompiler.Result res = SolidityCompiler.compile(solFile, true, ABI, BIN, INTERFACE, METADATA);
-        System.out.println("Out: '" + res.output + "'");
-        System.out.println("Err: '" + res.errors + "'");
-        CompilationResult result = CompilationResult.parse(res.output);
-        System.out.println("contractname  " + solFile.getName());
-        Path source = Paths.get(solFile.getPath());
-        String contractname = solFile.getName().split("\\.")[0];
-        CompilationResult.ContractMetadata a = result.getContract(solFile.getName().split("\\.")[0]);
-        System.out.println("abi   " + a.abi);
-        System.out.println("bin   " + a.bin);
-        FileUtils.writeStringToFile(new File("src/test/resources/solidity/" + contractname + ".abi"), a.abi);
-        FileUtils.writeStringToFile(new File("src/test/resources/solidity/" + contractname + ".bin"), a.bin);
-        String binFile;
-        String abiFile;
-        String tempDirPath = new File("src/test/java/").getAbsolutePath();
-        String packageName = "org.fisco.bcos.temp";
-        String filename = contractname;
-        abiFile = "src/test/resources/solidity/" + filename + ".abi";
-        binFile = "src/test/resources/solidity/" + filename + ".bin";
-        SolidityFunctionWrapperGenerator.main(Arrays.asList(
-                "-a", abiFile,
-                "-b", binFile,
-                "-p", packageName,
-                "-o", tempDirPath
-        ).toArray(new String[0]));
+            val r2 = contract.getInfo(batch.meterList!![1].toByteArray()).send()
+            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+                    batch.meterList!![1],
+                    r2.value1, r2.value2, r2.value3, r2.value4)
+            Assert.assertEquals("PASS", r2.value3)
+        }
     }
-    System.out.println("generate successfully");
-}
-```
-
-该测试案例将src/test/resources/contract目录下的所有Solidity合约文件(默认提供HelloWorld合约)均转为相应的abi和bin文件，保存在src/test/resources/solidity目录下。然后将abi文件和对应的bin文件组合转换为Java合约文件，保存在src/test/java/org/fisco/bcos/temp目录下。SDK将利用Java合约文件进行合约部署与调用。
-
-### 部署和调用合约测试
-
-提供ContractTest测试类测试部署和调用合约。示例测试如下：
-
-```java
-@Test
-public void deployAndCallHelloWorld() throws Exception {
-    //deploy contract
-    HelloWorld helloWorld = HelloWorld.deploy(web3j, credentials, new StaticGasProvider(gasPrice, gasLimit)).send();
-    if (helloWorld != null) {
-        System.out.println("HelloWorld address is: " + helloWorld.getContractAddress());
-        //call set function
-        helloWorld.set("Hello, World!").send();
-        //call get function
-        String result = helloWorld.get().send();
-        System.out.println(result);
-        assertTrue( "Hello, World!".equals(result));
-    }
-}
 ```
 
 ## 贡献代码
