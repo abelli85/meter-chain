@@ -1,5 +1,8 @@
 pragma solidity ^0.4.24;
 
+/**
+ * 水表检定结果的上链、添加检定结果、结单.
+ */
 contract UserMeter {
     /**
      * 水表的检定结果
