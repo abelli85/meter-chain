@@ -8,7 +8,6 @@ import org.junit.Test
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 import java.io.File
-import java.io.IOException
 import java.util.*
 
 class SolidityFunctionWrapperGeneratorTest {
@@ -16,7 +15,6 @@ class SolidityFunctionWrapperGeneratorTest {
     protected var packageName = "org.fisco.bcos.solidity"
 
     @Test
-    @Throws(Exception::class)
     fun generateClassFromABIForHelloWorld() {
         val binFile1 = ClassPathResource("solidity/HelloWorld.bin").file.absolutePath
         val abiFile1 = ClassPathResource("solidity/HelloWorld.abi").file.absolutePath
@@ -29,7 +27,6 @@ class SolidityFunctionWrapperGeneratorTest {
     }
 
     @Test
-    @Throws(IOException::class)
     fun compileSolFilesToJavaTest() {
         val solFileList = File("src/test/resources/contract")
         val solFiles = solFileList.listFiles()
@@ -39,8 +36,8 @@ class SolidityFunctionWrapperGeneratorTest {
             log.info("Err: '{}'", res.errors)
             val result = CompilationResult.parse(res.output)
             log.info("contractname  {}", solFile.name)
-            val contractname = solFile.name.split("\\.").toTypedArray()[0]
-            val a = result.getContract(solFile.name.split("\\.").toTypedArray()[0])
+            val contractname = solFile.name.split(".").toTypedArray()[0]
+            val a = result.getContract(solFile.name.split(".").toTypedArray()[0])
             log.info("abi   {}", a.abi)
             log.info("bin   {}", a.bin)
             FileUtils.writeStringToFile(File("src/test/resources/solidity/$contractname.abi"), a.abi)
