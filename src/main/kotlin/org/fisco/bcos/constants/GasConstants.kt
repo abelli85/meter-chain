@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fisco.bcos.constants;
+package org.fisco.bcos.constants
 
-import java.math.BigInteger;
+import java.math.BigInteger
 
-public class GasConstants {
-
-    public static final BigInteger GAS_PRICE = new BigInteger("300000000");
-    public static final BigInteger GAS_LIMIT = new BigInteger("300000000");
+object GasConstants {
+    val GAS_PRICE = BigInteger("300000000")
+    val GAS_LIMIT = BigInteger("300000000")
 }

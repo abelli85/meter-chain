@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fisco.bcos.constants;
+package org.fisco.bcos.constants
 
-public class ConnectConstants {
-
-    public static final Integer CONNECT_SECONDS = 30;
-    public static final Integer CONNECT_SLEEP_PER_MILLIS = 1;
-    public static final Integer TIME_OUT = 30000;
+object ConnectConstants {
+    const val CONNECT_SECONDS = 30
+    const val CONNECT_SLEEP_PER_MILLIS = 1
+    const val TIME_OUT = 30000
 }
