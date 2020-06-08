@@ -22,5 +22,8 @@ open class Application : CommandLineRunner {
 private val lgr = LoggerFactory.getLogger(Application::class.java)
 fun main(args: Array<String>) {
     SpringApplication.run(Application::class.java, *args)
-    lgr.info("Meter Chain Started exited.")
+
+    Runtime.getRuntime().addShutdownHook(Thread {
+        lgr.info("Meter Chain Starter exited.")
+    })
 }
