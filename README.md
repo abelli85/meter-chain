@@ -10,6 +10,31 @@ English / [中文](doc/README_CN.md)
 
 The sample spring boot project is based on [Web3SDK](https://fisco-bcos-documentation.readthedocs.io/en/latest/docs/sdk/sdk.html), which provides the basic framework and basic test cases for blockchain application and helps developers to quickly develop applications based on the FISCO BCOS blockchain. **The version only supports** [FISCO BCOS 2.0+](https://fisco-bcos-documentation.readthedocs.io/en/latest/).
 
+The water meter must be verified according to the [National Measurement Law] before it is installed in a residential house and must be used within the validity period.
+Water meters are batch-tested according to the order form. Each order form contains 1 to 100 water meters.
+
+The items of the verification include: appearance verification, pressure verification, electromechanical conversion verification, and flow point verification. If any one of them fails, the water meter is deemed as unqualified.
+In the verification content, the flow point verification process is the most complicated. Taking the DN15 water meter as an example, three common flow points need to be verified, which are:
+- Q1-31.25 L/h, error requirement +/-5.0%
+- Q2-50 L/h, error requirement +/-2.0%
+- Q3-2500 L/h, error requirement +/-2.0%
+
+On the automatic calibration table, the water pump is controlled to maintain a constant flow rate, and the water meter wheel is visually recognized, and the starting and readings under the constant flow rate of Q1/Q2/Q3 are recorded,
+And compare with the measured water volume of the pump flowmeter of the test bench, and calculate the error value of each flow point.
+If the error value of any flow point exceeds the requirements of the regulations, it is considered as unqualified.
+
+Note: 
+- From the common water meter calibers DN15, DN20, DN25, ..., DN150, DN200, DN300 and other residential, industrial and commercial users, their needs
+the value and number of the verified flow points are different. The larger the caliber, the more the flow points need to be verified.
+- The verification period of water meters below DN40 caliber is generally 6 years, and the verification period of above calibers is 2 years.
+
+
+The business process of the project:
+- Receive orders from the manufacturers, and the orders are put on the chain.
+- Verification of water meters, and the results of verification are on the chain.
+- Completion of order, contract completion.
+- Water meter users can log in to the water meter blockchain website to check the water meter verification results and the validity period. Request to replace them as soon as or near the validity period.
+
 ## Quickstart
 
 ### Precodition

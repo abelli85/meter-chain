@@ -41,6 +41,7 @@ class ContractTest : BaseTest() {
             manufacturer = "宁波水表"
             verifierName = "abel"
             deliverDate = LocalDateTime(2020, 6, 1, 9, 20).toDate()
+            validDate = LocalDateTime(2026, 5, 31, 0, 0).toDate()
         }
         const val KEY_BATCH_ID = "batchId"
         private val lgr = LoggerFactory.getLogger(ContractTest::class.java)
