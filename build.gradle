@@ -59,6 +59,8 @@ dependencies {
 
   compile 'org.fisco-bcos:web3sdk:2.3.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    compile 'joda-time:joda-time:2.10.6'
 }
 
 configurations {

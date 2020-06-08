@@ -5,6 +5,7 @@ import org.fisco.bcos.web3j.precompile.config.SystemConfigService
 import org.fisco.bcos.web3j.protocol.Web3j
 import org.junit.Assert
 import org.junit.Test
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
 class PrecompiledServiceApiTest : BaseTest() {
@@ -15,12 +16,15 @@ class PrecompiledServiceApiTest : BaseTest() {
     private val credentials: Credentials? = null
 
     @Test
-    @Throws(Exception::class)
     fun testSystemConfigService() {
         val systemConfigSerivce = SystemConfigService(web3j, credentials)
         systemConfigSerivce.setValueByKey("tx_count_limit", "2000")
         val value = web3j!!.getSystemConfigByKey("tx_count_limit").send().systemConfigByKey
-        println(value)
+        lgr.info(value)
         Assert.assertTrue("2000" == value)
+    }
+
+    companion object {
+        private val lgr = LoggerFactory.getLogger(PrecompiledServiceApiTest::class.java)
     }
 }

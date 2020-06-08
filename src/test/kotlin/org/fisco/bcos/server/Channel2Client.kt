@@ -3,29 +3,27 @@ package org.fisco.bcos.server
 import org.fisco.bcos.BaseTest
 import org.fisco.bcos.channel.client.Service
 import org.fisco.bcos.channel.dto.ChannelRequest
+import org.joda.time.LocalDateTime
 import org.junit.Test
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class Channel2Client : BaseTest() {
     @Autowired
     var service: Service? = null
 
     @Test
-    @Throws(Exception::class)
-    fun channel2ClientTest() {
+    fun testChannel2ClientTest() {
         val topic = "topic"
         val count = "2".toInt()
-        val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        println("3s ...")
+        lgr.info("3s ...")
         Thread.sleep(1000)
-        println("2s ...")
+        lgr.info("2s ...")
         Thread.sleep(1000)
-        println("1s ...")
+        lgr.info("1s ...")
         Thread.sleep(1000)
-        println("start test")
-        println("===================================================================")
+        lgr.info("start test")
+        lgr.info("===================================================================")
         for (i in 0 until count) {
             Thread.sleep(2000)
             val request = ChannelRequest()
@@ -33,19 +31,20 @@ class Channel2Client : BaseTest() {
             request.messageID = service!!.newSeq()
             request.timeout = 5000
             request.content = "request seq:" + request.messageID
-            println(
-                    df.format(LocalDateTime.now())
-                            + " request seq:"
-                            + request.messageID.toString() + ", Content:"
-                            + request.content)
+            lgr.info("{} request seq: {}, Content: {}",
+                    LocalDateTime.now(),
+                    request.messageID.toString(),
+                    request.content)
             val response = service!!.sendChannelMessage2(request)
-            println(
-                    df.format(LocalDateTime.now())
-                            + "response seq:"
-                            + response.messageID.toString() + ", ErrorCode:"
-                            + response.errorCode
-                            + ", Content:"
-                            + response.content)
+            lgr.info("{} response seq: {}, ErrorCode: {}, Content:{}",
+                    LocalDateTime.now(),
+                    response.messageID.toString(),
+                    response.errorCode,
+                    response.content)
         }
+    }
+
+    companion object {
+        private val lgr = LoggerFactory.getLogger(Channel2Client::class.java)
     }
 }
