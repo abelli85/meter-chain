@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fisco.bcos;
+package org.fisco.bcos
 
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.runner.RunWith
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit4.SpringRunner
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
-public abstract class BaseTest {}
+@RunWith(SpringRunner::class)
+@SpringBootTest(classes = [Application::class])
+abstract class BaseTest
