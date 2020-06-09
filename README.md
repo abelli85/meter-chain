@@ -31,7 +31,7 @@ the value and number of the verified flow points are different. The larger the c
 
 The business process of the project:
 - Receive orders from the manufacturers, and the orders are put on the chain.
-- Verification of water meters, and the results of verification are on the chain.
+- Verification of water meters, and the results of verification are on the chain. (in the production, verification results can be configured to chain automatically)
 - Completion of order, contract completion.
 - Water meter users can log in to the water meter blockchain website to check the water meter verification results and the validity period. Request to replace them as soon as or near the validity period.
 
@@ -50,7 +50,7 @@ $ git clone https://github.com/abelli85/meter-chain.git
 Copy the `ca.crt`, `sdk.crt`, and `sdk.key` files in the node's directory `nodes/${ip}/sdk` to the project's `src/main/resources` directory.(Before FISCO BCOS 2.1, the certificate files are `ca.crt`, `node.crt` and `node.key`)
 
 ### Mongodb Required
-Just launch mongodb service with default port, empty password.
+Just launch mongodb service with default port, empty password. If your mongodb requires password, change application.yml repectively.
 ```
 docker pull mongo
 docker run -d --name nosql -p 27017:27017 mongo
@@ -98,19 +98,20 @@ Compile and run test cases:
 
 ```
 $ cd meter-chain-starter
-$ ./gradlew build
+$ ./gradlew clean build
 $ ./gradlew test
 ```
 
 When all test cases run successfully, it means that the blockchain is running normally,and the project is connected to the blockchain through the SDK. You can develop your blockchain application based on the project。
 
-### Access Website
-
-Run the following command, you should see "水表链启动...". Then browsering to "http://localhost:8080/" should work:
+After test cases finished, run the following command, you should see "水表链启动...":
 
 ```
 $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
 ```
+
+Then open "http://localhost:8080/" with browser, it should display:
+![Snapshot of homepage](https://github.com/abelli85/meter-chain/blob/master/doc/demo-homepage.png)
 
 **Note: If you run the demo project in IntelliJ IDEA or Eclipse, please use gradle wrapper mode. In addition, please enable `Annotation Processors` in `Settings` for IntelliJ IDEA.**
 

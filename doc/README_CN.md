@@ -31,7 +31,7 @@
 
 该项目的业务流程：
 - 收单 - 接收来自厂商的委托单, 委托单上链.
-- 检定 - 检定水表， 检定结果上链.
+- 检定 - 检定水表， 检定结果上链. (在生产系统中，可设定检定台自动上链)
 - 结单 - 完成委托单， 合约完成.
 - 查询 - 水表用户可以登录水表区块链网站，查询水表检定结果及有效期，接近或超出有效期须尽快申请更换.
 
@@ -50,7 +50,7 @@ $ git clone https://github.com/abelli85/meter-chain.git
 将节点所在目录`nodes/${ip}/sdk`下的`ca.crt`、`sdk.crt`和`sdk.key`文件拷贝到项目的`src/main/resources`目`录下供SDK使用(FISCO BCOS 2.1以前，证书为`ca.crt`、`node.crt`和`node.key`)。
 
 ### 配置 mongodb 数据库
-启动 mongodb 服务，默认端口，无口令.
+启动 mongodb 服务，默认端口，无口令. 如果 mongodb 需要口令，请修改application.yml文件中的对应配置.
 ```
 docker pull mongo
 docker run -d --name nosql -p 27017:27017 mongo
@@ -96,19 +96,19 @@ spring:
 编译并运行测试案例，在项目根目录下运行：
 ```
 $ cd meter-chain-starter
-$ ./gradlew build
+$ ./gradlew clean build
 $ ./gradlew test
 ```
 
 当所有测试案例运行成功，则代表区块链运行正常，该项目通过SDK连接区块链正常。开发者可以基于该项目进行具体应用开发。
 
-### 访问网页
-
-运行如下命令行，可看到 "水表链启动...". 此时打开浏览器访问 "http://localhost:8080/":
+运行测试用例后，执行如下命令行，可看到 "水表链启动...":
 
 ```
 $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
 ```
+此时打开浏览器访问 "http://localhost:8080/", 可以看到:
+![首页截图](https://github.com/abelli85/meter-chain/blob/master/doc/demo-homepage.png)
 
 **注：如果在IntelliJ IDEA或Eclipse中运行该demo工程，则使用gradle wrapper模式，此外IntelliJ IDEA需要在设置中开启`Annotation Processors`功能。**
 
