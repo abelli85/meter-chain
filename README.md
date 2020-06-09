@@ -113,7 +113,7 @@ Then open "http://localhost:8080/" with browser, it should display:
 
 ## Test Case Introduction
 
-The sample project provides test cases for developers to use. The test cases are mainly divided into tests for [Web3j API](https://fisco-bcos-documentation.readthedocs.io/en/latest/docs/sdk/sdk.html#web3j-api), [Precompiled Serveice API](https://fisco-bcos-documentation.readthedocs.io/en/latest/docs/sdk/sdk.html#precompiled-service-api), Solidity contract file to Java contract file, deployment and call contract.
+The sample project provides test cases for developers to use. The test cases are mainly divided into tests for [Web3j API](https://fisco-bcos-documentation.readthedocs.io/en/latest/docs/sdk/sdk.html#web3j-api), [Precompiled Serveice API](https://fisco-bcos-documentation.readthedocs.io/en/latest/docs/sdk/sdk.html#precompiled-service-api), Solidity contract file(https://github.com/abelli85/meter-chain/blob/master/src/main/resources/contract/UserMeter.sol) to Java contract file(https://github.com/abelli85/meter-chain/blob/master/src/main/kotlin/org/fisco/bcos/temp/UserMeter.kt), deployment and call contract.
 
 ### Contract Test
 
