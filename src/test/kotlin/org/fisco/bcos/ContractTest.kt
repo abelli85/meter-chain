@@ -151,7 +151,10 @@ class ContractTest : BaseTest() {
         }
     }
 
-    @Test
+    /**
+     * just comment because it's not used any more.
+     */
+    // @Test
     fun testDeployAndCallHelloWorld() {
         // deploy contract
         val helloWorld: HelloWorld = HelloWorld.deploy(
