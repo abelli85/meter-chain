@@ -108,7 +108,7 @@ $ ./gradlew test
 $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
 ```
 此时打开浏览器访问 "http://localhost:8080/", 可以看到:
-![首页截图](https://github.com/abelli85/meter-chain/blob/master/doc/demo-homepage.png)
+![首页截图](https://raw.githubusercontent.com/abelli85/meter-chain/master/doc/demo-homepage.png)
 
 **注：如果在IntelliJ IDEA或Eclipse中运行该demo工程，则使用gradle wrapper模式，此外IntelliJ IDEA需要在设置中开启`Annotation Processors`功能。**
 

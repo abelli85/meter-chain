@@ -111,7 +111,7 @@ $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
 ```
 
 Then open "http://localhost:8080/" with browser, it should display:
-![Snapshot of homepage](https://github.com/abelli85/meter-chain/blob/master/doc/demo-homepage.png)
+![Snapshot of homepage](https://raw.githubusercontent.com/abelli85/meter-chain/master/doc/demo-homepage.png)
 
 **Note: If you run the demo project in IntelliJ IDEA or Eclipse, please use gradle wrapper mode. In addition, please enable `Annotation Processors` in `Settings` for IntelliJ IDEA.**
 
