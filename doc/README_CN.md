@@ -110,7 +110,7 @@ $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
 
 ## 测试案例介绍
 
-该示例项目提供的测试案例，供开发者参考使用。测试案例主要分为对[Web3j API](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html#web3j-api)，[Precompiled Serveice API](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html#precompiled-service-api)、Solidity合约文件转Java合约文件、部署和调用合约的测试。
+该示例项目提供的测试案例，供开发者参考使用。测试案例主要分为对[Web3j API](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html#web3j-api)，[Precompiled Serveice API](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html#precompiled-service-api)、Solidity合约文件(https://github.com/abelli85/meter-chain/blob/master/src/main/resources/contract/UserMeter.sol) 转Java合约文件(https://github.com/abelli85/meter-chain/blob/master/src/main/kotlin/org/fisco/bcos/temp/UserMeter.kt)、部署和调用合约的测试。
 
 ### 合约测试
 
