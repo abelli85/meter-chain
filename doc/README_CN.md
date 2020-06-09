@@ -3,12 +3,8 @@
 [English](../README.md) / 中文
 
 # Meter Chain Starter
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Build Status](https://travis-ci.org/FISCO-BCOS/spring-boot-starter.svg?branch=master)](https://travis-ci.org/FISCO-BCOS/spring-boot-starter)
-[![CodeFactor](https://www.codefactor.io/repository/github/fisco-bcos/spring-boot-starter/badge)](https://www.codefactor.io/repository/github/fisco-bcos/spring-boot-starter)
+该项目是基于fisco bcos 的 spring-boot-starter 项目创建。
 ---
-
-该项目是基于[Web3SDK](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/sdk.html)的spring boot版本的示例项目。提供FISCO BCOS区块链应用开发的基本框架和基本的测试案例，帮助开发者基于FISCO BCOS区块链快速进行应用开发。**此版本只支持**[FISCO BCOS 2.0+](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/introduction.html)。
 
 水表在安装到居民住宅前，按国家计量法须检定合格, 且必须在有效期内使用。
 水表按委托单进行批量检定，每个委托单包含1～100只水表。

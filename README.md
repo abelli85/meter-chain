@@ -3,12 +3,8 @@
 English / [中文](doc/README_CN.md)
 
 # Meter Chain Starter
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Build Status](https://travis-ci.org/FISCO-BCOS/spring-boot-starter.svg?branch=master)](https://travis-ci.org/FISCO-BCOS/spring-boot-starter)
-[![CodeFactor](https://www.codefactor.io/repository/github/fisco-bcos/spring-boot-starter/badge)](https://www.codefactor.io/repository/github/fisco-bcos/spring-boot-starter)
+This project is built based on spring-boot-starter for fisco bcos.
 ---
-
-The sample spring boot project is based on [Web3SDK](https://fisco-bcos-documentation.readthedocs.io/en/latest/docs/sdk/sdk.html), which provides the basic framework and basic test cases for blockchain application and helps developers to quickly develop applications based on the FISCO BCOS blockchain. **The version only supports** [FISCO BCOS 2.0+](https://fisco-bcos-documentation.readthedocs.io/en/latest/).
 
 The water meter must be verified according to the [National Measurement Law] before it is installed in a residential house and must be used within the validity period.
 Water meters are batch-tested according to the order form. Each order form contains 1 to 100 water meters.
