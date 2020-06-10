@@ -45,7 +45,7 @@ class SolidityFunctionWrapperGeneratorTest {
             var binFile: String
             var abiFile: String
             val tempDirPath = File("src/test/java/").absolutePath
-            val packageName = "org.fisco.bcos.temp"
+//            val packageName = "org.fisco.bcos.temp"
             abiFile = "src/test/resources/solidity/$contractname.abi"
             binFile = "src/test/resources/solidity/$contractname.bin"
             SolidityFunctionWrapperGenerator.main(Arrays.asList(

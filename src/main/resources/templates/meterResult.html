@@ -45,7 +45,11 @@
                         </tr>
                         <tr>
                             <th>有效期</th>
-                            <td><span th:text="${#dates.format(meter.validDate, 'yyyy-MM-dd hh:mm:ss')}"></span></td>
+                            <td><span th:text="${meter.validDateFmt}"></span></td>
+                        </tr>
+                        <tr>
+                            <th>合约地址</th>
+                            <td><span th:text="${meter.contractAddress}"></span></td>
                         </tr>
                     </table>
                 </div>
