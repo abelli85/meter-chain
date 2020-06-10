@@ -40,6 +40,17 @@ contract UserMeter {
     string public manufacturer;
 
     /**
+     * 检定员姓名
+     */
+    string public verifierName;
+
+    /**
+     * 检定有效期. ISO8601格式，如：2020-06-01T16:01:02Z (GMT时间，北京时间 2020-6-1 8:01:02)
+     * 或包含时区: 2020-06-01T08:01:02+0800 (后面不再+Z)
+     */
+    string public validDate;
+
+    /**
      * 检定员
      */
     address public verifier;
@@ -63,9 +74,11 @@ contract UserMeter {
      * 每个委托单只检定一个厂商的水表.
      * @param _manufacturer - 水表厂家
      */
-    constructor(string _manufacturer) public {
+    constructor(string _manufacturer, string _verifierName, string _validDate) public {
         verifier = msg.sender;
         manufacturer = _manufacturer;
+        verifierName = _verifierName;
+        validDate = _validDate;
     }
 
     /**
@@ -80,10 +93,10 @@ contract UserMeter {
         require(!finished, "委托单完成后不可添加水表的检定结果");
 
         meterList.push(MeterInfo({
-            meterId: _meterId,
-            verifyTime: _verifyTime,
-            result: _result
-        }));
+            meterId : _meterId,
+            verifyTime : _verifyTime,
+            result : _result
+            }));
     }
 
     /**
