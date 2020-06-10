@@ -77,7 +77,7 @@ class HelloController {
             // 取得合约
             val meter = Meter().apply {
                 meterId = _meterId
-                verifierName = um.verifier().send()
+                verifierName = um.verifierName().send()
                 validDateFmt = um.validDate().send()
                 verifyTime = chain.value2
                 result = chain.value3
