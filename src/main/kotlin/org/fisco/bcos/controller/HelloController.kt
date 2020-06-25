@@ -39,14 +39,19 @@ class HelloController {
     /**
      * 显示所有委托单.
      */
-    @GetMapping("/")
-    fun index(model: Model): String {
-        lgr.info("request index: /")
+    @GetMapping("/gallery")
+    fun gallery(model: Model): String {
+        lgr.info("request index: /gallery")
 
         val batchList = mongoTemplate!!.findAll(MeterBatch::class.java)
         model.addAttribute("batchList", batchList)
 
-        return "index"
+        return "contract-list"
+    }
+
+    @GetMapping("/contact")
+    fun buildContract(model: Model): String {
+        return "contract-start"
     }
 
     /**

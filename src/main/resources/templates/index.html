@@ -1,90 +1,78 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+
 <head>
-    <title>我是水表用户</title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link th:href="@{/bootstrap/bootstrap.css}" href="../static/bootstrap/bootstrap.css" rel="stylesheet"/>
-    <link th:href="@{/bootstrap/bootstrap-theme.css}" href="../static/bootstrap/bootstrap-theme.css"
-          rel="stylesheet"/>
-    <script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
-    <script th:src="@{/js/bootstrap.min.js}" src="../static/js/bootstrap.min.js"></script>
-    <link th:href="@{/css/gridtable.css}" href="css/gridtable.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Home</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/templatemo-style.css" />
 </head>
+
 <body>
-<div class="container">
-    <div class="row">
-        <div align="center">
-            <h2>尊敬的水表用户，欢迎您！</h2>
+  <div class="tm-page-container mx-auto">
+    <header class="tm-header text-center">
+      <h1 class="tm-title text-uppercase">水表在链</h1>
+      <p class="tm-primary-color"><i>链上水表公证系统</i></p>
+    </header>
+
+    <section class="tm-section">
+      <nav class="tm-nav">
+        <ul>
+          <li class="active">
+            <a href="index.html"><span class="tm-nav-deco"></span>首页</a>
+          </li>
+          <li>
+            <a href="gallery"><span class="tm-nav-deco"></span>合约</a>
+          </li>
+          <li>
+            <a href="contact"><span class="tm-nav-deco"></span>上链</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="tm-content-container">
+        <figure class="mb-0">
+          <img src="img/img-1.jpg" alt="Image" class="img-fluid tm-img" />
+        </figure>
+        <div class="tm-content">
+          <h2 class="tm-page-title">水表检定证书的上链及检索</h2>
+          <p class="mb-4">
+            水表在安装到居民住宅前，按国家计量法须检定合格, 且必须在有效期内使用。
+            水表按委托单进行批量检定，每个委托单包含1～100只水表。
+            检定内容包括: 外观检定、压力检定、机电转换检定、流量点检定，其中任何一项不合格，该只水表均被认定为不合格。
+            在检定内容中，以流量点检定过程最为复杂，以DN15水表为例， 需检定3个常用流量点，分别是:
+            <ul>
+          <li>Q1 - 31.25 L/h, 误差要求 +/-5.0%</li>
+          <li>Q2 - 50 L/h, 误差要求 +/-2.0%</li>
+          <li>Q3 - 2500 L/h, 误差要求 +/-2.0%</li>
+            </ul>
+          </p>
+          <p>
+            在自动化检定台上，控制水泵保持恒定流量，通过视觉识别水表字轮，分别记录在Q1/Q2/Q3恒定流量下的起至读数，
+            并与检定台水泵流量计的计量水量进行比较，计算每个流量点的误差值。
+            任何一个流量点的误差值超过规程要求，均被认定为不合格.
+          </p>
+          <p>
+            上链数据：
+            <ul>
+            <li>- 从常用水表口径 DN15、DN20、DN25、...、DN150、DN200、DN300 等居民、工商业用户的水表，其需要
+              检定的流量点的数值和个数都是不相同的，口径越大的水表，需要检定的流量点个数越多。</li>
+          <li>- DN25口径及以下水表的检定有效期一般为6年，检定证书全部上链.</li>
+          <li>- DN40口径及以上水表的检定有效期为2年，检定证书全部上链，流量点的检定结果也全部上链.</li>
+        </ul>
+          </p>
         </div>
+      </div>
+    </section>
 
-        <div class="col-md-7">
-            <div class="panel panel-primary">
-                <div class="panel-heading text-center">
-                    <span class="panel-title">委托单列表</span>
-                </div>
-                <div class="panel-body">
-                    <table class="gridtable" style="width: 80%">
-                        <tr style="height: 40px; background-color: #f7ecb5">
-                            <th class="text-center">委托单号</th>
-                            <th class="text-center">水表厂家</th>
-                            <th class="text-center">水表数量</th>
-                            <th class="text-center">检定员</th>
-                            <th class="text-center">有效期</th>
-                            <th class="text-center">合约地址</th>
-                        </tr>
-                        <tr th:each="batch:${batchList}" class="text-center" style="height: 40px">
-                            <td><span th:text="${batch.batchId}"></span></td>
-                            <td><span th:text="${batch.manufacturer}"></span></td>
-                            <td><span th:text="${batch.meterCount}"></span></td>
-                            <td><span th:text="${batch.verifierName}"></span></td>
-                            <td><span th:text="${#dates.format(batch.validDate, 'yyyy-MM-dd hh:mm:ss')}"></span></td>
-                            <td><span th:text="${batch.contractAddress}"></span></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <br/>
-
-        <div class="row">
-            <form class="form-horizontal" id="frm" th:action="@{/queryMeter}" method="post" target="_blank">
-                <div class="col-md-4">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading text-center">
-                            <span class="panel-title">输入表码查询检定结果</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="meterId" class="col-sm-3 control-label" style="color: red">表&nbsp;&nbsp;码:</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="meterId" name="meterId" placeholder="请输入表码" value="0221520012000301">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="meterId" class="col-sm-3 control-label" style="color: red">合约地址:</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="contractAddress" name="contractAddress" placeholder="请输入合约地址" value="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-10 control-label" style="color:red;text-align: center"
-                                   id="tick">&nbsp;</label>
-                        </div>
-                        <div class="form-group" >
-                            <div class="col-sm-8">
-                                <button type="submit" id="submit" class="btn btn-default">&nbsp;&nbsp; 查询 &nbsp;&nbsp;</button>
-                            </div>
-                        </div>
-                        <div class="panel-footer text-right">
-                            <br/>
-                            <span class="panel-title"><a th:href="@{/autoChain}" target="_blank">模拟检定台自动上链</a> Abel@2020</span>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-    </div>
+    <footer>
+      <span>Copyright &copy; 2020.Company name All rights reserved.</span>
+      <span></span>
+    </footer>
+  </div>
 </body>
+
 </html>
