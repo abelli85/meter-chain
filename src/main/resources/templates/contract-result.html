@@ -44,7 +44,7 @@
             <caption>模拟检定台自动上链水表的检定结果</caption>
             <thead>
             <tr>
-              <th>表码</th>
+              <th style="width: 30%">表码</th>
               <td><span th:text="${meter.meterId}"></span></td>
             </tr>
             </thead>
@@ -67,13 +67,13 @@
             </tr>
             <tr>
               <th>合约地址</th>
-              <td><span th:text="${meter.contractAddress}"></span><br><br>
+              <td><span th:text="${meter.contractAddress}" style="word-break: break-all"></span><br><br>
               (请使用该合约地址可在任一节点上查询水表的检定结果.)
               </td>
             </tr>
             <tr>
               <th>委托单号</th>
-              <td><span th:text="${meter.batchId}" style="word-break: break-all"></span></td>
+              <td><span th:text="${meter.batchId}"></span></td>
             </tr>
             </tbody>
           </table>
