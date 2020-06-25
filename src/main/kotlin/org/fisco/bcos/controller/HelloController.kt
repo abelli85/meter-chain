@@ -58,19 +58,20 @@ class HelloController {
      * 根据表码查询从链上查询检定结果.
      * @param model - 需要填充网页的模式对象
      * @param _meterId - 要查询检定结果的表码， 不可为空.
-     * @param _contractAddress - 水表所在的委托单合约地址， 如果在业务上链的节点上查看，该地址可空； 
+     * @param _contractAddress - 水表所在的委托单合约地址， 如果在业务上链的节点上查看，该地址可空；
      *                           如果在其他节点上查询， 该地址不可为空。
      */
     @PostMapping("/queryMeter")
     fun queryMeter(model: Model,
                    @RequestParam(Meter.KEY_METER_ID) _meterId: String,
                    @RequestParam(Meter.KEY_CONTRACT_ADDRESS, required = false) _contractAddress: String? = null): String {
-        lgr.info("query verify result from chain for {}", _meterId)
-
         // 表码是否存在
         val contAddr = if (!_meterId.isNullOrBlank() && _contractAddress.isNullOrBlank())
             askContractAddress(_meterId)
-        else _contractAddress
+        else {
+            lgr.info("根据合约地址 {} 查询水表 {} 的检定结果", _contractAddress, _meterId)
+            _contractAddress
+        }
 
         // 查询链
         if (!contAddr.isNullOrBlank()) {
@@ -93,7 +94,7 @@ class HelloController {
         }
 
         // 展示链上合约
-        return "meterResult"
+        return "contract-result"
     }
 
     /**
@@ -102,6 +103,7 @@ class HelloController {
      * @return 水表所在的委托单合约地址
      */
     private fun askContractAddress(meterId: String): String? {
+        lgr.info("根据水表表码请求合约地址: {}", meterId)
         val meter = mongoTemplate!!.find(Query.query(Criteria.where(Meter.KEY_METER_ID).`is`(meterId)),
                 Meter::class.java).firstOrNull() ?: return null
 
@@ -172,7 +174,7 @@ class HelloController {
         lgr.info("完成委托单")
 
         model.addAttribute("batch", batch)
-        return "autoResult"
+        return "contract-upload"
     }
 
     companion object {
