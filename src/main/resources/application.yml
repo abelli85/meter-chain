@@ -35,3 +35,6 @@ spring:
     cache: false
     servlet:
       content-type: text/html
+
+addressconf:
+  allPublicAddress: { User: 0x33674063c4618f4773fac75dc2f07e55f6f391ce, Arbitrator: 0x6bc952a2e4db9c0c86a368d83e9df0c6ab481102, Depositor: 0x5a6c7ccf9efa702f4e8888ff7e8a3310abcf8c51 }
