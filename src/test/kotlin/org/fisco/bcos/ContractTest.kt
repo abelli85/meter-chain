@@ -124,6 +124,7 @@ class ContractTest : BaseTest() {
         um.finish().send()
         lgr.warn("空委托单不允许完成")
 
+        // 检定结果上链
         um.verify(batch.meterList!![0].toByteArray(), LocalDateTime.now().toString(), "PASS").send()
         Thread.sleep(100)
         um.verify(batch.meterList!![1].toByteArray(), LocalDateTime.now().toString(), "PASS").send()

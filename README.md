@@ -24,12 +24,16 @@ Note:
 the value and number of the verified flow points are different. The larger the caliber, the more the flow points need to be verified.
 - The verification period of water meters below DN40 caliber is generally 6 years, and the verification period of above calibers is 2 years.
 
-
-The business process of the project:
-- Receive orders from the manufacturers, and the orders are put on the chain.
-- Verification of water meters, and the results of verification are on the chain. (in the production, verification results can be configured to chain automatically)
-- Completion of order, contract completion.
-- Water meter users can log in to the water meter blockchain website to check the water meter verification results and the validity period. Request to replace them as soon as or near the validity period.
+The project contain 2 modules:
+- The business process of water meter verification chain:
+    - Receive orders from the manufacturers, and the orders are put on the chain.
+    - Verification of water meters, and the results of verification are on the chain. (in the production, verification results can be configured to chain automatically)
+    - Completion of order, contract completion.
+    - Water meter users can log in to the water meter blockchain website to check the water meter verification results and the validity period. Request to replace them as soon as or near the validity period.
+- The business process of report chain:
+    - create report for meter verification result.
+    - auditor/publisher/arbitrator sign hash (sha256sum/md5sum/etc) of the report.
+    - the user verify the verification report on the chain.
 
 ## Quickstart
 
@@ -117,7 +121,7 @@ The sample project provides test cases for developers to use. The test cases are
 
 ### Contract Test
 
-Provide `ContractTest` class to test the whole contract. The sample test is as follows:
+Provide `ContractTest` class to test the whole contract. The sample test for verification result chain is as follows:
 
 ```kotlin
     /**
@@ -125,28 +129,15 @@ Provide `ContractTest` class to test the whole contract. The sample test is as f
      */
     @Test
     fun testUserMeter() {
-        mongoTemplate!!.save(batch)
-        lgr.info("新到检定委托单: {}", JSON.toJSONString(batch, true))
+        // ...
 
         // 委托单开始上链
         val um = UserMeter.deploy(web3j, credentials,
                 StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
-                "宁波水表").send()
+                batch.manufacturer, batch.batchId, "罗工", "2026-6-30").send()
         lgr.info("UserMeter contract address: {}", um.contractAddress)
-        batch.apply {
-            verifierAddress = um.verifier().send().toString()
-            contractAddress = um.contractAddress
-        }
-        mongoTemplate.updateFirst(
-                Query.query(Criteria.where("batchId").`is`(batch.batchId)),
-                Update.update("verifierAddress", batch.verifierAddress)
-                        .addToSet("contractAddress", batch.contractAddress),
-                MeterBatch::class.java)
 
-        // 空委托单不允许完成
-        um.finish().send()
-        lgr.warn("空委托单不允许完成")
-
+        // 检定结果上链
         um.verify(batch.meterList!![0].toByteArray(), LocalDateTime.now().toString(), "PASS").send()
         Thread.sleep(100)
         um.verify(batch.meterList!![1].toByteArray(), LocalDateTime.now().toString(), "PASS").send()
@@ -154,54 +145,53 @@ Provide `ContractTest` class to test the whole contract. The sample test is as f
 
         // 完成委托单
         um.finish().send()
-        batch.apply {
-            finishDate = Date()
-        }
-        mongoTemplate.updateFirst(
-                Query.query(Criteria.where("batchId").`is`(batch.batchId)),
-                Update.update("finishDate", batch.finishDate),
-                MeterBatch::class.java
-        )
-        lgr.info("完成委托单")
-
-        // 立即查询检定结果
-        kotlin.run {
-            val r1 = um.getInfo(batch.meterList!![0].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
-                    batch.meterList!![0],
-                    r1.value1, r1.value2, r1.value3, r1.value4)
-            Assert.assertEquals("PASS", r1.value3)
-
-            val r2 = um.getInfo(batch.meterList!![1].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
-                    batch.meterList!![1],
-                    r2.value1, r2.value2, r2.value3, r2.value4)
-            Assert.assertEquals("PASS", r2.value3)
-        }
 
         // 根据合约地址查询水表检定结果.
-        val batchList = mongoTemplate.findAll(MeterBatch::class.java)
-        Assert.assertTrue(batchList.size > 0)
-        batchList.first().also {
-            lgr.info("retrieving contract for the meter-batch: {}", JSON.toJSONString(it, true))
-
-            val contract = UserMeter.load(it.contractAddress, web3j, credentials,
-                    StaticGasProvider(
-                            GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT))
-
             val r1 = contract.getInfo(batch.meterList!![0].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+            lgr.info("检定结果 - 表码: {}, 委托单号: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
                     batch.meterList!![0],
-                    r1.value1, r1.value2, r1.value3, r1.value4)
-            Assert.assertEquals("PASS", r1.value3)
+                    r1.value1, r1.value2, r1.value3, r1.value4, r1.value5)
+            Assert.assertEquals("PASS", r1.value4)
 
-            val r2 = contract.getInfo(batch.meterList!![1].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
-                    batch.meterList!![1],
-                    r2.value1, r2.value2, r2.value3, r2.value4)
-            Assert.assertEquals("PASS", r2.value3)
-        }
+        // ...
     }
+```
+
+The sample test for verification report chain is as follows:
+
+```kotlin
+    /**
+     * 测试水表检定报告的上链、三方签名、查询。
+     */
+    @Test
+    fun testBuildReport() {
+        // ...
+        // 报告签名
+        // sha256sum doc/HYLWGB-20210128.pdf
+        // 02b499fe69a7f8d0e7939f823c622cd7025f31cfad63b3382437e0a8c5b9e2b5  doc/HYLWGB-20210128.pdf
+        val rptHash = "02b499fe69a7f8d0e7939f823c622cd7025f31cfad63b3382437e0a8c5b9e2b5"
+        kotlin.run {
+            val cred = Tools.loadkey(FILE_AUDTIOR)!!
+            val data = Sign.getSignInterface().signMessage(rptHash.toByteArray(Charsets.US_ASCII), cred.ecKeyPair)
+            val signStr = Tools.signatureDataToString(data)
+            um.auditorSign(rptHash, cred.address, signStr).send()
+            lgr.info("审核员签名 {}: {}.", rpt.batchId, signStr)
+        }
+
+        // ...
+            val r1 = contract.getSigner().send()
+            lgr.info("检定报告 - 委托单号: {}, 审核员: {}, 审核员签名: {}, 检定中心: {}, 检定中心签名: {}, 仲裁机构: {}, 仲裁机构签名: {}.",
+                    r1.value1,
+                    r1.value2, r1.value3,
+                    r1.value4, r1.value5,
+                    r1.value6, r1.value7)
+
+            // 验证签名
+            lgr.info("审核员签名 {}: {} == {}.", rpt.batchId, Tools.getPublicKey(FILE_AUDTIOR),
+                    Tools.verifySignedMessage(rptHash, r1.value3))
+            assertEquals(Tools.getPublicKey(FILE_AUDTIOR),
+                    Tools.verifySignedMessage(rptHash, r1.value3))
+        // ...
 ```
 
 ## Code Contribution

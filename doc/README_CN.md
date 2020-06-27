@@ -25,11 +25,16 @@
 - DN40口径以下水表的检定有效期一般为6年，以上口径的检定有效期为2年.
 
 
-该项目的业务流程：
-- 收单 - 接收来自厂商的委托单, 委托单上链.
-- 检定 - 检定水表， 检定结果上链. (在生产系统中，可设定检定台自动上链)
-- 结单 - 完成委托单， 合约完成.
-- 查询 - 水表用户可以登录水表区块链网站，查询水表检定结果及有效期，接近或超出有效期须尽快申请更换.
+该项目包含2个模块。
+- 水表检定结果的业务流程：
+    - 收单 - 接收来自厂商的委托单, 委托单上链.
+    - 检定 - 检定水表， 检定结果上链. (在生产系统中，可设定检定台自动上链)
+    - 结单 - 完成委托单， 合约完成.
+    - 查询 - 水表用户可以登录水表区块链网站，查询水表检定结果及有效期，接近或超出有效期须尽快申请更换.
+- 水表检定报告的业务流程：
+    - 创建水表检定报告的合约。
+    - 审核员/发布机构/仲裁机构签名。
+    - 用户验证检定报告的签名.
 
 ## 快速启动
 
@@ -114,7 +119,7 @@ $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
 
 ### 合约测试
 
-提供[水表检定]的合约测试。测试用例如下：
+提供[水表检定结果]的合约测试。测试用例如下：
 
 ```kotlin
     /**
@@ -122,28 +127,15 @@ $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
      */
     @Test
     fun testUserMeter() {
-        mongoTemplate!!.save(batch)
-        lgr.info("新到检定委托单: {}", JSON.toJSONString(batch, true))
+        // ...
 
         // 委托单开始上链
         val um = UserMeter.deploy(web3j, credentials,
                 StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
-                "宁波水表").send()
+                batch.manufacturer, batch.batchId, "罗工", "2026-6-30").send()
         lgr.info("UserMeter contract address: {}", um.contractAddress)
-        batch.apply {
-            verifierAddress = um.verifier().send().toString()
-            contractAddress = um.contractAddress
-        }
-        mongoTemplate.updateFirst(
-                Query.query(Criteria.where("batchId").`is`(batch.batchId)),
-                Update.update("verifierAddress", batch.verifierAddress)
-                        .addToSet("contractAddress", batch.contractAddress),
-                MeterBatch::class.java)
 
-        // 空委托单不允许完成
-        um.finish().send()
-        lgr.warn("空委托单不允许完成")
-
+        // 检定结果上链
         um.verify(batch.meterList!![0].toByteArray(), LocalDateTime.now().toString(), "PASS").send()
         Thread.sleep(100)
         um.verify(batch.meterList!![1].toByteArray(), LocalDateTime.now().toString(), "PASS").send()
@@ -151,54 +143,53 @@ $ java -jar build/libs/meter-chain-starter-0.0.1-SNAPSHOT.jar
 
         // 完成委托单
         um.finish().send()
-        batch.apply {
-            finishDate = Date()
-        }
-        mongoTemplate.updateFirst(
-                Query.query(Criteria.where("batchId").`is`(batch.batchId)),
-                Update.update("finishDate", batch.finishDate),
-                MeterBatch::class.java
-        )
-        lgr.info("完成委托单")
-
-        // 立即查询检定结果
-        kotlin.run {
-            val r1 = um.getInfo(batch.meterList!![0].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
-                    batch.meterList!![0],
-                    r1.value1, r1.value2, r1.value3, r1.value4)
-            Assert.assertEquals("PASS", r1.value3)
-
-            val r2 = um.getInfo(batch.meterList!![1].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
-                    batch.meterList!![1],
-                    r2.value1, r2.value2, r2.value3, r2.value4)
-            Assert.assertEquals("PASS", r2.value3)
-        }
 
         // 根据合约地址查询水表检定结果.
-        val batchList = mongoTemplate.findAll(MeterBatch::class.java)
-        Assert.assertTrue(batchList.size > 0)
-        batchList.first().also {
-            lgr.info("retrieving contract for the meter-batch: {}", JSON.toJSONString(it, true))
-
-            val contract = UserMeter.load(it.contractAddress, web3j, credentials,
-                    StaticGasProvider(
-                            GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT))
-
             val r1 = contract.getInfo(batch.meterList!![0].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+            lgr.info("检定结果 - 表码: {}, 委托单号: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
                     batch.meterList!![0],
-                    r1.value1, r1.value2, r1.value3, r1.value4)
-            Assert.assertEquals("PASS", r1.value3)
+                    r1.value1, r1.value2, r1.value3, r1.value4, r1.value5)
+            Assert.assertEquals("PASS", r1.value4)
 
-            val r2 = contract.getInfo(batch.meterList!![1].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
-                    batch.meterList!![1],
-                    r2.value1, r2.value2, r2.value3, r2.value4)
-            Assert.assertEquals("PASS", r2.value3)
-        }
+        // ...
     }
+```
+
+提供[水表检定报告]的合约测试。测试用例如下：
+
+```kotlin
+    /**
+     * 测试水表检定报告的上链、三方签名、查询。
+     */
+    @Test
+    fun testBuildReport() {
+        // ...
+        // 报告签名
+        // sha256sum doc/HYLWGB-20210128.pdf
+        // 02b499fe69a7f8d0e7939f823c622cd7025f31cfad63b3382437e0a8c5b9e2b5  doc/HYLWGB-20210128.pdf
+        val rptHash = "02b499fe69a7f8d0e7939f823c622cd7025f31cfad63b3382437e0a8c5b9e2b5"
+        kotlin.run {
+            val cred = Tools.loadkey(FILE_AUDTIOR)!!
+            val data = Sign.getSignInterface().signMessage(rptHash.toByteArray(Charsets.US_ASCII), cred.ecKeyPair)
+            val signStr = Tools.signatureDataToString(data)
+            um.auditorSign(rptHash, cred.address, signStr).send()
+            lgr.info("审核员签名 {}: {}.", rpt.batchId, signStr)
+        }
+
+        // ...
+            val r1 = contract.getSigner().send()
+            lgr.info("检定报告 - 委托单号: {}, 审核员: {}, 审核员签名: {}, 检定中心: {}, 检定中心签名: {}, 仲裁机构: {}, 仲裁机构签名: {}.",
+                    r1.value1,
+                    r1.value2, r1.value3,
+                    r1.value4, r1.value5,
+                    r1.value6, r1.value7)
+
+            // 验证签名
+            lgr.info("审核员签名 {}: {} == {}.", rpt.batchId, Tools.getPublicKey(FILE_AUDTIOR),
+                    Tools.verifySignedMessage(rptHash, r1.value3))
+            assertEquals(Tools.getPublicKey(FILE_AUDTIOR),
+                    Tools.verifySignedMessage(rptHash, r1.value3))
+        // ...
 ```
 
 ## 贡献代码
