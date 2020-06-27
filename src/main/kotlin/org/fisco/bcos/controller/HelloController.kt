@@ -37,19 +37,24 @@ class HelloController {
     private val mongoTemplate: MongoTemplate? = null
 
     /**
-     * 显示所有委托单.
+     * 显示所有委托单 (不含报告).
      */
-    @GetMapping("/gallery")
+    @GetMapping(PATH_BATCH_LIST)
     fun gallery(model: Model): String {
-        lgr.info("request index: /gallery")
+        lgr.info("request index: {}", PATH_BATCH_LIST)
 
-        val batchList = mongoTemplate!!.findAll(MeterBatch::class.java)
+        val batchList = mongoTemplate!!.find(
+                Query(Criteria.where(KEY_REPORT_NAME).exists(false)),
+                MeterBatch::class.java)
         model.addAttribute("batchList", batchList)
 
         return "contract-list"
     }
 
-    @GetMapping("/contact")
+    /**
+     * 创建合约.
+     */
+    @GetMapping(PATH_BUILD_CONTRACT)
     fun buildContract(model: Model): String {
         return "contract-start"
     }
@@ -61,7 +66,7 @@ class HelloController {
      * @param _contractAddress - 水表所在的委托单合约地址， 如果在业务上链的节点上查看，该地址可空；
      *                           如果在其他节点上查询， 该地址不可为空。
      */
-    @PostMapping("/queryMeter")
+    @PostMapping(PATH_QUERY_METER)
     fun queryMeter(model: Model,
                    @RequestParam(Meter.KEY_METER_ID) _meterId: String,
                    @RequestParam(Meter.KEY_CONTRACT_ADDRESS, required = false) _contractAddress: String? = null): String {
@@ -75,22 +80,27 @@ class HelloController {
 
         // 查询链
         if (!contAddr.isNullOrBlank()) {
-            val um = UserMeter.load(contAddr, web3j, credentials,
-                    StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT))
-            val chain = um.getInfo(_meterId.toByteArray())
-                    .send()
+            try {
+                val um = UserMeter.load(contAddr, web3j, credentials,
+                        StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT))
+                val chain = um.getInfo(_meterId.toByteArray())
+                        .send()
 
-            // 取得合约
-            val meter = Meter().apply {
-                meterId = _meterId
-                verifierName = um.verifierName().send()
-                validDateFmt = um.validDate().send()
-                verifyTime = chain.value2
-                result = chain.value3
-                contractAddress = contAddr
+                // 取得合约
+                val meter = Meter().apply {
+                    meterId = _meterId
+                    verifierName = um.verifierName().send()
+                    validDateFmt = um.validDate().send()
+                    verifyTime = chain.value2
+                    result = chain.value3
+                    contractAddress = contAddr
+                }
+
+                model.addAttribute("meter", meter)
+            } catch (ex: Exception) {
+                lgr.error("contract can't be loaded: {}", ex.message)
+                lgr.debug(ex.message, ex)
             }
-
-            model.addAttribute("meter", meter)
         }
 
         // 展示链上合约
@@ -118,7 +128,7 @@ class HelloController {
      * 模拟检定台自动上链水表的检定结果. 生产系统中部署一个后台任务， 将检定员完成的水表检定结果自动上链.
      * @param model - 需要填充网页的模式对象
      */
-    @GetMapping("/autoChain")
+    @GetMapping(PATH_AUTO_CHAIN)
     fun autoChain(model: Model): String {
         lgr.info("auto chain demo data.")
 
@@ -144,7 +154,7 @@ class HelloController {
         // 委托单开始上链
         val um = UserMeter.deploy(web3j, credentials,
                 StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
-                "宁波水表", "黄工", "2026-5-31").send()
+                "宁波水表", batch.batchId, "黄工", "2026-5-31").send()
         lgr.info("UserMeter contract address: {}", um.contractAddress)
         batch.apply {
             verifierAddress = um.verifier().send().toString()
@@ -177,7 +187,32 @@ class HelloController {
         return "contract-upload"
     }
 
+    /**
+     * 显示所有报告
+     */
+    @GetMapping(PATH_REPORT_LIST)
+    fun reportList(model: Model): String {
+        lgr.info("request {}", PATH_REPORT_LIST)
+
+        val batchList = mongoTemplate!!.find(
+                Query(Criteria.where(KEY_REPORT_NAME).exists(true)),
+                MeterBatch::class.java)
+        model.addAttribute("batchList", batchList)
+
+        return "report-list"
+    }
+
     companion object {
+        const val KEY_REPORT_NAME = "reportName"
+
+        const val PATH_BATCH_LIST = "/gallery"
+        const val PATH_BUILD_CONTRACT = "/contract"
+        const val PATH_QUERY_METER = "/queryMeter"
+        const val PATH_AUTO_CHAIN = "/autoChain"
+
+        const val PATH_REPORT_LIST = "/report"
+        const val PATH_SIGN = "/sign"
+
         private val lgr = LoggerFactory.getLogger(HelloController::class.java)
     }
 }

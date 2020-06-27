@@ -76,6 +76,16 @@ class MeterBatch {
     var verifierName: String? = null
 
     /**
+     * 报告文件名称, 一般使用PDF文件.
+     */
+    var reportName: String? = null
+
+    /**
+     * 报告文件哈希串, 一般使用PDF文件的 sha256sum.
+     */
+    var reportHash: String? = null
+
+    /**
      * 检定员地址
      */
     var verifierAddress: String? = null

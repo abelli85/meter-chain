@@ -79,7 +79,7 @@ class ContractTest : BaseTest() {
         // 委托单开始上链
         val um = UserMeter.deploy(web3j, credentials,
                 StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
-                "宁波水表", "罗工", "2026-5-31").send()
+                "宁波水表", batch.batchId, "罗工", "2026-5-31").send()
         lgr.info("UserMeter contract address: {}", um.contractAddress)
         batch.apply {
             verifierAddress = um.verifier().send().toString()

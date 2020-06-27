@@ -31,7 +31,13 @@
             <a href="/gallery"><span class="tm-nav-deco"></span>合约</a>
           </li>
           <li class="active">
-            <a href="/contact"><span class="tm-nav-deco"></span>上链</a>
+            <a href="/contract"><span class="tm-nav-deco"></span>上链</a>
+          </li>
+          <li>
+            <a href="/report"><span class="tm-nav-deco"></span>报告</a>
+          </li>
+          <li>
+            <a href="/sign"><span class="tm-nav-deco"></span>签名</a>
           </li>
         </ul>
       </nav>
@@ -67,8 +73,8 @@
             </tr>
             <tr>
               <th>合约地址</th>
-              <td><span th:text="${meter.contractAddress}" style="word-break: break-all"></span><br><br>
-              (请使用该合约地址可在任一节点上查询水表的检定结果.)
+              <td><textarea class="uneditable-textarea" th:text="${meter.contractAddress}" id="contract_address" readonly style="word-break: break-all"></textarea><br><br>
+              (请<button type="button" class="btn btn-mini btn-success" id="copyAddrButton" onclick="copyAddr('contract_address')">复制</button> 该合约地址, 在任一节点上查询水表的检定结果.)
               </td>
             </tr>
             <tr>
@@ -105,6 +111,13 @@
         },
       });
     });
+
+    function copyAddr(txtid) {
+      let cpt = document.getElementById(txtid);
+      $(cpt).focus();
+      $(cpt).select();
+      document.execCommand('Copy', false, null);
+    }
   </script>
 
 </body>
