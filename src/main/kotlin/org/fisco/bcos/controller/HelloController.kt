@@ -328,7 +328,10 @@ class HelloController {
                    @RequestParam(Meter.KEY_CONTRACT_ADDRESS, required = false) _contractAddress: String? = null): String {
         try {
             // 是否在上链节点查询合约地址
-            val contAddr = if (_contractAddress.isNullOrBlank()) askBatchAddress(_batchId) else _contractAddress.trim()
+            val contAddr = if (_contractAddress.isNullOrBlank()) askBatchAddress(_batchId) else {
+                lgr.info("根据合约地址 {} 验证委托单 {} 的检定报告", _contractAddress, _batchId)
+                _contractAddress.trim()
+            }
 
             val um = UserMeter.load(contAddr, web3j, credentials,
                     StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT))

@@ -93,6 +93,7 @@ class ContractTest : BaseTest() {
     @Test
     fun testUserMeter() {
         mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(batch.batchId)), MeterBatch::class.java)
+        mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(batch.batchId)), Meter::class.java)
         lgr.info("clean meter-batch to avoid confliction: {}", batch.batchId)
 
         mongoTemplate!!.save(batch)
@@ -185,6 +186,7 @@ class ContractTest : BaseTest() {
     @Test
     fun testBuildReport() {
         mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(rpt.batchId)), MeterBatch::class.java)
+        mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(rpt.batchId)), Meter::class.java)
         lgr.info("clean batch-report to avoid confliction: {}", rpt.batchId)
 
         mongoTemplate!!.save(rpt)
