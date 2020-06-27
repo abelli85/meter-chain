@@ -115,16 +115,16 @@ class ContractTest : BaseTest() {
         // 立即查询检定结果
         kotlin.run {
             val r1 = um.getInfo(batch.meterList!![0].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+            lgr.info("检定结果 - 表码: {}, 委托单号: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
                     batch.meterList!![0],
-                    r1.value1, r1.value2, r1.value3, r1.value4)
-            Assert.assertEquals("PASS", r1.value3)
+                    r1.value1, r1.value2, r1.value3, r1.value4, r1.value5)
+            Assert.assertEquals("PASS", r1.value4)
 
             val r2 = um.getInfo(batch.meterList!![1].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+            lgr.info("检定结果 - 表码: {}, 委托单号: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
                     batch.meterList!![1],
-                    r2.value1, r2.value2, r2.value3, r2.value4)
-            Assert.assertEquals("PASS", r2.value3)
+                    r2.value1, r2.value2, r2.value3, r2.value4, r2.value5)
+            Assert.assertEquals("PASS", r2.value4)
         }
 
         // 根据合约地址查询水表检定结果.
@@ -138,16 +138,16 @@ class ContractTest : BaseTest() {
                             GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT))
 
             val r1 = contract.getInfo(batch.meterList!![0].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+            lgr.info("检定结果 - 表码: {}, 委托单号: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
                     batch.meterList!![0],
-                    r1.value1, r1.value2, r1.value3, r1.value4)
-            Assert.assertEquals("PASS", r1.value3)
+                    r1.value1, r1.value2, r1.value3, r1.value4, r1.value5)
+            Assert.assertEquals("PASS", r1.value4)
 
             val r2 = contract.getInfo(batch.meterList!![1].toByteArray()).send()
-            lgr.info("检定结果 - 表码: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
+            lgr.info("检定结果 - 表码: {}, 委托单号: {}, 厂家: {}, 检定时间: {}, 检定结果: {}, 检定员: {}.",
                     batch.meterList!![1],
-                    r2.value1, r2.value2, r2.value3, r2.value4)
-            Assert.assertEquals("PASS", r2.value3)
+                    r2.value1, r2.value2, r2.value3, r2.value4, r2.value5)
+            Assert.assertEquals("PASS", r2.value4)
         }
     }
 

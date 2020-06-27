@@ -91,8 +91,9 @@ class HelloController {
                     meterId = _meterId
                     verifierName = um.verifierName().send()
                     validDateFmt = um.validDate().send()
-                    verifyTime = chain.value2
-                    result = chain.value3
+                    batchId = chain.value2
+                    verifyTime = chain.value3
+                    result = chain.value4
                     contractAddress = contAddr
                 }
 
