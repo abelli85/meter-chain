@@ -43,21 +43,27 @@
                 <div class="mb-0 tm-img-overlay-wrap">
                     <div class="tm-img-overlay"></div>
                     <div class="tm-img-overlay-text text-white p-5">
-                        <h4 class="mb-4">在链查询水表的检定结果</h4>
+                        <h4 class="mb-4">在链验证水表检定报告的签名</h4>
                         <p class="tm-small">
                             <ul>
-                        <li>根据水表表码在上链节点上查询合约地址.</li>
-                        <li>根据水表表码及合约地址在任一节点上查询检定结果.</li>
+                        <li>为方便演示, 三方密钥均部署在一个系统中. (注: 生产系统中三方的密钥是分别部署到各自的服务器上.)</li>
                     </ul>
                         </p>
                     </div>
                 </div>
                 <div class="tm-content">
-                    <form action="" method="POST" class="tm-contact-form" th:action="@{/queryMeter}" target="_blank">
+                    <form action="" method="POST" class="tm-contact-form" th:action="@{/verifySign}" target="_blank">
                         <div class="form-group">
-                            <input type="text" id="meterId" name="meterId"
+                            <input type="text" id="batchId" name="batchId"
                                 class="form-control rounded-0 border-top-0 border-right-0 border-left-0"
-                                placeholder="表&nbsp;&nbsp;码" required="" value="0221520012000301"/>
+                                placeholder="委托单号" required="" value="2020050136"/>
+                        </div>
+
+                        <div class="form-group">
+                            <p>检定报告哈希(推荐使用 sha256sum 报告名称 获取哈希):</p>
+                            <textarea rows="6" id="reportHash" name="reportHash"
+                                      class="form-control rounded-0 border-top-0 border-right-0 border-left-0"
+                                      placeholder="检定报告哈希(推荐使用 sha256sum <报告名称> 获取哈希)">02b499fe69a7f8d0e7939f823c622cd7025f31cfad63b3382437e0a8c5b9e2b5</textarea>
                         </div>
 
                         <div class="form-group">
@@ -67,15 +73,15 @@
                         </div>
 
                         <div class="form-group text-right">
-                            <button type="submit" class="btn btn-primary rounded-0">
-                                查&nbsp;&nbsp;询
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                验证
                             </button>
                         </div>
                     </form>
                 </div>
                 <div class="tm-content-2">
-                    <p>模拟检定台自动上链水表的检定结果. 生产系统中部署一个后台任务， 将检定员完成的水表检定结果自动上链.<br>
-                        <a th:href="@{/autoChain}" target="_blank">模拟检定台自动上链</a>
+                    <p>模拟检定台自动上链委托单的检定报告. 为方便演示, 三方密钥均部署在一个系统中. (注: 生产系统中三方的密钥是分别部署到各自的服务器上.)<br>
+                        <a th:href="@{/autoReport}" target="_blank">模拟检定报告上链</a>
                     </p>
                 </div>
             </div>

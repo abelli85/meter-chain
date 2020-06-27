@@ -61,8 +61,8 @@ class ContractTest : BaseTest() {
 
         // 接收来自厂家的检定委托单, 并签名检定报告
         private val rpt = MeterBatch().apply {
-            batchId = "202006" + (1001..9999).random().toString()
-            meterList = listOf("0221520012000133")
+            batchId = "2020050136"
+            meterList = listOf("0228020012000133")
             manufacturer = "江苏沪仪"
             reportName = "HYLWGB-20210128.pdf"
             verifierName = "abel"
@@ -78,8 +78,6 @@ class ContractTest : BaseTest() {
      */
     @Before
     fun setUp() {
-        mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(batch.batchId)), MeterBatch::class.java)
-        lgr.info("clean meter-batch to avoid confliction: {}", batch.batchId)
     }
 
     /**
@@ -94,6 +92,9 @@ class ContractTest : BaseTest() {
      */
     @Test
     fun testUserMeter() {
+        mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(batch.batchId)), MeterBatch::class.java)
+        lgr.info("clean meter-batch to avoid confliction: {}", batch.batchId)
+
         mongoTemplate!!.save(batch)
         batch.meterList?.forEach {
             mongoTemplate!!.save(Meter().apply {
@@ -106,7 +107,7 @@ class ContractTest : BaseTest() {
         // 委托单开始上链
         val um = UserMeter.deploy(web3j, credentials,
                 StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
-                batch.manufacturer, batch.batchId, "罗工", "2026-5-31").send()
+                batch.manufacturer, batch.batchId, "罗工", "2026-6-30").send()
         lgr.info("UserMeter contract address: {}", um.contractAddress)
         batch.apply {
             verifierAddress = um.verifier().send().toString()
@@ -183,6 +184,9 @@ class ContractTest : BaseTest() {
      */
     @Test
     fun testBuildReport() {
+        mongoTemplate!!.remove(Query.query(Criteria.where(MeterBatch.KEY_BATCH_ID).`is`(rpt.batchId)), MeterBatch::class.java)
+        lgr.info("clean batch-report to avoid confliction: {}", rpt.batchId)
+
         mongoTemplate!!.save(rpt)
         batch.meterList?.forEach {
             mongoTemplate!!.save(Meter().apply {
@@ -195,7 +199,7 @@ class ContractTest : BaseTest() {
         // 委托单开始上链
         val um = UserMeter.deploy(web3j, credentials,
                 StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
-                rpt.manufacturer, rpt.batchId, "罗工", "2026-5-31").send()
+                rpt.manufacturer, rpt.batchId, "罗工", "2022-5-31").send()
         lgr.info("UserMeter contract address: {}", um.contractAddress)
         rpt.apply {
             verifierAddress = um.verifier().send().toString()

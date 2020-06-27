@@ -44,7 +44,8 @@
       <div class="tm-content-container">
         <div class="tm-content tm-content-2">
           <p>
-            此处为水表检定结果的上链节点的合约列表. 对于非上链检定结果的节点，合约列表为空.
+            此处为检定报告的上链节点的合约列表. (对于非上链检定报告的节点，合约列表为空,
+            但可通过合约地址验证检定报告的签名)
           </p>
 
           <div class="container-fluid">
@@ -87,11 +88,6 @@
               </tbody>
             </table>
           </div>
-        </div>
-        <div class="tm-content-2">
-          <p>模拟审核员上链水表的检定报告. 为方便演示, 在测试系统中部署一个后台任务, 模拟将审核员创建的水表检定报告上链.<br>
-            <a th:href="@{/autoReport}" target="_blank">模拟审核员上链检定报告</a>
-          </p>
         </div>
       </div>
     </div>
