@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/templatemo-style.css" />
+</head>
+
+<body>
+    <div class="tm-page-container mx-auto">
+        <header class="tm-header text-center">
+            <h1 class="tm-title text-uppercase">水表在链</h1>
+            <p class="tm-primary-color"><i>链上水表公证系统</i></p>
+        </header>
+
+        <section class="tm-section">
+            <nav class="tm-nav">
+                <ul>
+                    <li>
+                        <a href="/"><span class="tm-nav-deco"></span>首页</a>
+                    </li>
+                    <li>
+                        <a href="/gallery"><span class="tm-nav-deco"></span>合约</a>
+                    </li>
+                    <li>
+                        <a href="/contract"><span class="tm-nav-deco"></span>上链</a>
+                    </li>
+                    <li>
+                        <a href="/report"><span class="tm-nav-deco"></span>报告</a>
+                    </li>
+                    <li class="active">
+                        <a href="/sign"><span class="tm-nav-deco"></span>签名</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="tm-content-container">
+                <div class="mb-0 tm-img-overlay-wrap">
+                    <div class="tm-img-overlay"></div>
+                    <div class="tm-img-overlay-text text-white p-5">
+                        <h4 class="mb-4">在链查询水表的检定结果</h4>
+                        <p class="tm-small">
+                            <ul>
+                        <li>根据水表表码在上链节点上查询合约地址.</li>
+                        <li>根据水表表码及合约地址在任一节点上查询检定结果.</li>
+                    </ul>
+                        </p>
+                    </div>
+                </div>
+                <div class="tm-content">
+                    <form action="" method="POST" class="tm-contact-form" th:action="@{/queryMeter}" target="_blank">
+                        <div class="form-group">
+                            <input type="text" id="meterId" name="meterId"
+                                class="form-control rounded-0 border-top-0 border-right-0 border-left-0"
+                                placeholder="表&nbsp;&nbsp;码" required="" value="0221520012000301"/>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea rows="6" id="contractAddress" name="contractAddress"
+                                class="form-control rounded-0 border-top-0 border-right-0 border-left-0"
+                                placeholder="合约地址(为空时必须在上链节点操作; 填写合约地址可在任一节点上查询)"></textarea>
+                        </div>
+
+                        <div class="form-group text-right">
+                            <button type="submit" class="btn btn-primary rounded-0">
+                                查&nbsp;&nbsp;询
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tm-content-2">
+                    <p>模拟检定台自动上链水表的检定结果. 生产系统中部署一个后台任务， 将检定员完成的水表检定结果自动上链.<br>
+                        <a th:href="@{/autoChain}" target="_blank">模拟检定台自动上链</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <span>Copyright &copy; 2020.Company name All rights reserved.</span>
+        </footer>
+    </div>
+</body>
+
+</html>

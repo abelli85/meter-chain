@@ -213,6 +213,7 @@ class HelloController {
 
         const val PATH_REPORT_LIST = "/report"
         const val PATH_SIGN = "/sign"
+        const val PATH_AUTO_REPORT = "/autoReport"
 
         private val lgr = LoggerFactory.getLogger(HelloController::class.java)
     }

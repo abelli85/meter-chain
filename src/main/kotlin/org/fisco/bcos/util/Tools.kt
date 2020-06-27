@@ -22,6 +22,7 @@ import java.security.interfaces.ECPrivateKey
  * <a href='https://ethereum.stackexchange.com/questions/550/which-cryptographic-hash-function-does-ethereum-use'>这里</a>.
  */
 object Tools {
+    const val DEFAULT_PASS = "123456"
     private val lgr = LoggerFactory.getLogger(Tools::class.java)
 
     /**
@@ -45,11 +46,12 @@ object Tools {
      * @param keyAlias - 密钥的别名, 默认ec
      * @return - 验证实例
      */
-    fun loadkey(keyStoreFileName: String, keyStorePassword: String, keyPassword: String, keyAlias: String = "ec"): Credentials? {
+    fun loadkey(keyStoreFileName: String, keyStorePassword: String = DEFAULT_PASS,
+                keyPassword: String = DEFAULT_PASS, keyAlias: String = "ec"): Credentials? {
         var ksInputStream: InputStream? = null
         try {
             val ks = KeyStore.getInstance("JKS")
-            ksInputStream = this.javaClass.getResourceAsStream(keyStoreFileName)
+            ksInputStream = javaClass.getResourceAsStream(keyStoreFileName)
             ks.load(ksInputStream, keyStorePassword.toCharArray())
             val key = ks.getKey(keyAlias, keyPassword.toCharArray())
             val keyPair = ECKeyPair.create((key as ECPrivateKey).s)
@@ -83,7 +85,8 @@ object Tools {
      * @return - 公钥地址
      */
     @Throws(Exception::class)
-    fun getPublicKey(keyStoreFileName: String, keyStorePassword: String, keyPassword: String, keyAlias: String = "ec"): String? {
+    fun getPublicKey(keyStoreFileName: String, keyStorePassword: String = DEFAULT_PASS,
+                     keyPassword: String = DEFAULT_PASS, keyAlias: String = "ec"): String? {
         val credentials = loadkey(keyStoreFileName, keyStorePassword, keyPassword)
         return credentials?.address
     }

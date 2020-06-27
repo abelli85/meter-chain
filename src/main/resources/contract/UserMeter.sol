@@ -79,7 +79,7 @@ contract UserMeter {
     /**
      * 审核员的签名
      */
-    address public auditorSigner;
+    string public auditorSigner;
 
     /**
      * 发布单位, 一般指 检定中心.
@@ -89,7 +89,7 @@ contract UserMeter {
     /**
      * 发布单位的签名, 一般指 检定中心的签名.
      */
-    address public publisherSigner;
+    string public publisherSigner;
 
     /**
      * 仲裁机构, 一般指 城市计量局.
@@ -99,7 +99,7 @@ contract UserMeter {
     /**
      * 仲裁机构的签名, 一般指 城市计量局的签名.
      */
-    address public arbitratorSigner;
+    string public arbitratorSigner;
 
     /** 委托单开始. */
     event batchLaunchedEvent(string _batchId);
@@ -111,8 +111,6 @@ contract UserMeter {
     event arbitratorSignedEvent(string _batchId, address _arbitrator);
     /** 委托单结束. */
     event batchFinishedEvent(string _batchId);
-    /** 水表不存在. */
-    event meterNotFound(string _batchId, bytes16 _meterId);
 
     /**
      * 每个委托单只检定一个厂商的水表.
@@ -152,7 +150,7 @@ contract UserMeter {
     /**
      * 审核员 签名
      */
-    function auditorSign(string _reportHash, address _auditor, address _auditorSigner) public {
+    function auditorSign(string _reportHash, address _auditor, string _auditorSigner) public {
         require(!finished, "委托单完成后不可签名");
         reportHash = _reportHash;
         auditor = _auditor;
@@ -164,7 +162,7 @@ contract UserMeter {
     /**
      * 发布单位 签名
      */
-    function publisherSign(address _publisher, address _publisherSigner) public {
+    function publisherSign(address _publisher, string _publisherSigner) public {
         require(!finished, "委托单完成后不可签名");
         publisher = _publisher;
         publisherSigner = _publisherSigner;
@@ -175,7 +173,7 @@ contract UserMeter {
     /**
      * 仲裁机构 签名
      */
-    function arbitratorSign(address _arbitrator, address _arbitratorSigner) public {
+    function arbitratorSign(address _arbitrator, string _arbitratorSigner) public {
         require(!finished, "委托单完成后不可签名");
         arbitrator = _arbitrator;
         arbitratorSigner = _arbitratorSigner;
@@ -223,11 +221,6 @@ contract UserMeter {
                 break;
             }
         }
-
-        // meter not found in the batch.
-        if (!found) {
-            emit meterNotFound(batchId, _meterId);
-        }
     }
 
     /**
@@ -240,9 +233,9 @@ contract UserMeter {
      * @return _arbitratorSigner - 仲裁机构的签名, 一般指 城市计量局的签名.
      */
     function getSigner() public view returns (string _batchId,
-        address _auditor, address _auditorSigner,
-        address _publisher, address _publisherSigner,
-        address _arbitrator, address _arbitratorSigner) {
+        address _auditor, string _auditorSigner,
+        address _publisher, string _publisherSigner,
+        address _arbitrator, string _arbitratorSigner) {
         _batchId = batchId;
 
         _auditor = auditor;
@@ -252,6 +245,6 @@ contract UserMeter {
         _publisherSigner = publisherSigner;
 
         _arbitrator = arbitrator;
-        _arbitratorSigner = _arbitratorSigner;
+        _arbitratorSigner = arbitratorSigner;
     }
 }

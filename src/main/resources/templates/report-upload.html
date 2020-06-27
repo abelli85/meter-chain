@@ -30,10 +30,10 @@
           <li>
             <a href="/gallery"><span class="tm-nav-deco"></span>合约</a>
           </li>
-          <li>
+          <li class="active">
             <a href="/contract"><span class="tm-nav-deco"></span>上链</a>
           </li>
-          <li class="active">
+          <li>
             <a href="/report"><span class="tm-nav-deco"></span>报告</a>
           </li>
           <li>
@@ -43,54 +43,41 @@
       </nav>
       <div class="tm-content-container">
         <div class="tm-content tm-content-2">
-          <p>
-            此处为水表检定结果的上链节点的合约列表. 对于非上链检定结果的节点，合约列表为空.
-          </p>
-
-          <div class="container-fluid">
-            <table class="table table-striped" th:each="batch:${batchList}">
-              <thead>
-              <tr>
-                <th style="width: 30%">委托单号</th>
-                <th><span th:text="${batch.batchId}"></span></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>水表厂家</td>
-                <td><span th:text="${batch.manufacturer}"></span></td>
-              </tr>
-              <tr>
-                <td>水表数量</td>
-                <td><span th:text="${batch.meterCount}"></span></td>
-              </tr>
-              <tr>
-                <td>报告名称</td>
-                <td><span th:text="${batch.reportName}"></span></td>
-              </tr>
-              <tr>
-                <td>检定员</td>
-                <td><span th:text="${batch.verifierName}"></span></td>
-              </tr>
-              <tr>
-                <td>有效期</td>
-                <td><span th:text="${#dates.format(batch.validDate, 'yyyy-MM-dd hh:mm:ss')}"></span></td>
-              </tr>
-              <tr>
-                <td>合约地址</td>
-                <td><a style="word-break: break-all" href="#" th:text="${batch.contractAddress}"></a></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td></td>
-              </tr>
-              </tbody>
-            </table>
+          <table class="table table-striped table-bordered">
+            <caption>模拟检定台自动上链水表的检定结果</caption>
+            <thead>
+            <tr>
+              <th style="width: 30%">委托单号</th>
+              <td><span th:text="${batch.batchId}"></span></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <th>水表厂家</th>
+              <td><span th:text="${batch.manufacturer}"></span></td>
+            </tr>
+            <tr>
+              <th>水表表码</th>
+              <td><span th:text="${batch.meterList}"></span></td>
+            </tr>
+            <tr>
+              <th>检定员</th>
+              <td><span th:text="${batch.verifierName}"></span></td>
+            </tr>
+            <tr>
+              <th>有效期</th>
+              <td><span th:text="${#dates.format(batch.validDate, 'yyyy-MM-dd hh:mm:ss')}"></span></td>
+            </tr>
+            <tr>
+              <th>合约地址</th>
+              <td><span style="word-break: break-all" th:text="${batch.contractAddress}"></span></td>
+            </tr>
+            </tbody>
+          </table>
           </div>
-        </div>
         <div class="tm-content-2">
-          <p>模拟审核员上链水表的检定报告. 为方便演示, 在测试系统中部署一个后台任务, 模拟将审核员创建的水表检定报告上链.<br>
-            <a th:href="@{/autoReport}" target="_blank">模拟审核员上链检定报告</a>
+          <p>
+          可使用本合约包含的水表表码在链查询检定结果. 查询完毕后您可以 <a href="javascript:window.close();">关闭窗体</a>.
           </p>
         </div>
       </div>
